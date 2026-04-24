@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Retail Wars Clicker</title>
+    <style>
+      :root {
+        --bg0: #020f25;
+        --bg1: #071a39;
+        --card: rgba(23, 34, 52, 0.92);
+        --card-border: rgba(255, 255, 255, 0.12);
+        --muted: #9aa4b6;
+        --white: #f6f8ff;
+        --yellow: #f5bc2c;
+        --green: #31d16e;
+        --red: #ff3e31;
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background: radial-gradient(circle at 30% 15%, #0b2b58 0%, var(--bg0) 40%, #010a18 100%);
+        color: var(--white);
+        font-family: "Inter", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        display: flex;
+        justify-content: center;
+      }
+
+      .app {
+        width: 100%;
+        max-width: 470px;
+        padding: 18px 14px 22px;
+      }
+
+      .row { display: flex; gap: 10px; }
+
+      .card {
+        background: linear-gradient(155deg, rgba(34, 45, 64, 0.95), rgba(16, 25, 40, 0.95));
+        border: 1px solid var(--card-border);
+        border-radius: 18px;
+        box-shadow: inset 0 0 0 1px rgba(255,255,255,.04), 0 14px 24px rgba(0,0,0,.35);
+      }
+
+      .top { align-items: center; margin-bottom: 12px; }
+
+      .avatar {
+        width: 84px; height: 84px; flex: 0 0 84px;
+        background: radial-gradient(circle at 30% 30%, #ffd59a 8%, #bc6f2f 58%, #64320f 100%);
+        border-radius: 24px;
+        border: 1px solid rgba(255,255,255,.2);
+        display: grid; place-items: center;
+        font-size: 50px;
+      }
+
+      .level-wrap { flex: 1; }
+      .level-title { font-size: 34px; line-height: 1; margin-bottom: 6px; font-weight: 700; }
+      .level-meta { display:flex; justify-content:space-between; font-weight: 700; margin-bottom: 6px; }
+      .progress {
+        width:100%; height:18px; background: rgba(255,255,255,.08);
+        border-radius: 999px; overflow:hidden;
+      }
+      .progress > div { height:100%; width:72%; background: linear-gradient(90deg,#6f75ff,#cb4cff); }
+
+      .hour {
+        min-width: 176px; padding: 10px 14px; display:flex; align-items:center; gap: 10px;
+      }
+      .coin {
+        width:54px; height:54px; border-radius:50%; background: radial-gradient(circle at 35% 35%, #ffe08d, #f5b824 60%, #d78f00 100%);
+        display:grid; place-items:center; font-size: 30px; font-weight: 900; color: #af7100;
+        border:2px solid #ffdd78;
+      }
+      .hour .text { font-size: 13px; color: #d4d9e3; }
+      .hour .value { font-size: 45px; font-weight: 800; line-height: .9; }
+      .gear { width:64px; display:grid; place-items:center; font-size: 34px; }
+
+      .missions { margin: 12px 0; }
+      .mission {
+        flex: 1; min-height: 158px; padding: 10px;
+        display:flex; flex-direction:column; align-items:center; justify-content:space-between;
+        text-align:center;
+      }
+      .mission .i { font-size: 54px; }
+      .mission .t { font-size: 21px; font-weight: 700; line-height: 1.1; }
+      .mission .s { color: var(--muted); font-size: 17px; }
+
+      .score {
+        display:flex; align-items:center; justify-content:center; gap:16px;
+        font-size: 72px; font-weight: 800; letter-spacing: 1px; margin: 14px 0;
+      }
+      .score .coin { width:74px; height:74px; font-size: 36px; }
+
+      .battle { padding: 16px; }
+      .battle-head {
+        display:flex; justify-content:space-between; font-size: 16px; font-weight: 700; color:#c4ccd8;
+      }
+      .battle-head strong { color:#ff3b2f; display:block; font-size: 44px; margin-top: 4px; }
+      .arena {
+        margin: 10px 0; height: 270px; border-radius: 14px; border: 1px solid rgba(255,255,255,.08);
+        background: linear-gradient(180deg, #303948 0%, #252f3f 42%, #1f2836 100%);
+        position: relative; overflow: hidden; display:grid; place-items:end center;
+      }
+      .arena::before {
+        content:""; position:absolute; inset:-20% -10% 40%;
+        background: radial-gradient(circle at 65% 60%, rgba(255,105,0,.75) 0%, rgba(255,75,0,.25) 22%, transparent 45%);
+      }
+      .arena .store {
+        width: 90%; height: 62%; background: linear-gradient(180deg,#f04236 0 25%, #f5f5f5 25% 100%);
+        border-radius: 12px 12px 4px 4px; border: 2px solid rgba(0,0,0,.3); position:relative;
+        box-shadow: 0 20px 30px rgba(0,0,0,.45);
+      }
+      .store::after {
+        content: "МАГНИТ";
+        position:absolute; top: 15px; left: 50%; transform:translateX(-50%);
+        font-size: 36px; font-weight: 900; letter-spacing: 1px; text-shadow: 0 4px 10px rgba(0,0,0,.4);
+      }
+
+      .damage {
+        position:absolute; top: 26px; left: 55%; transform: translateX(-50%);
+        font-size: 58px; font-weight: 900; color: #ff3a2b; text-shadow: 0 3px 0 #000, 0 0 30px rgba(255,40,0,.55);
+      }
+      .combo {
+        position:absolute; right: 8px; bottom: 22px; background: #fcd10f; color:#1c1000;
+        font-size: 56px; font-weight: 900; padding: 4px 10px; border-radius: 12px;
+        transform: rotate(-12deg);
+      }
+
+      .hp {
+        margin-top: 10px;
+        background: #0a1b34; border-radius: 999px; overflow:hidden; height: 22px; border:1px solid rgba(255,255,255,.14);
+      }
+      .hp > div { width: 50%; height:100%; background: linear-gradient(90deg,#f53f3a,#d8131b); }
+
+      .hit-row { margin: 12px 0; display:flex; justify-content:space-between; align-items:center; }
+
+      .side-btn {
+        width: 88px; height: 110px; display:grid; place-items:center; text-align:center; font-size: 42px;
+      }
+
+      .main-btn {
+        width: 270px; height: 270px; border-radius: 50%; border: 6px solid rgba(255,186,40,.9);
+        background: radial-gradient(circle at 45% 38%, #ffefb8 0%, #ff8e45 20%, #e72b1b 58%, #be1007 100%);
+        box-shadow: 0 0 0 10px rgba(61,73,96,.9), 0 0 0 16px rgba(26,31,42,.9), 0 26px 40px rgba(0,0,0,.45);
+        display:grid; place-items:center; font-size: 130px; cursor: pointer; user-select:none;
+        transition: transform .08s ease;
+      }
+      .main-btn:active { transform: scale(.95); }
+
+      .energy {
+        margin: 8px 8px 12px;
+      }
+      .energy .line { display:flex; justify-content:space-between; align-items:center; font-size: 22px; font-weight:700; }
+      .energy .bar {
+        margin-top: 8px; height: 14px; border-radius:999px; background: rgba(255,255,255,.13); overflow:hidden;
+      }
+      .energy .bar > div { width: 100%; height:100%; background: linear-gradient(90deg,#f2c635,#f0b600); }
+
+      .nav { display:flex; gap: 4px; padding: 4px; }
+      .tab {
+        flex:1; padding: 10px 0; border-radius: 16px; text-align:center; color:#9ca6b8; font-weight: 600;
+      }
+      .tab.active { color:#fff; background: linear-gradient(180deg, rgba(255,197,39,.2), rgba(255,197,39,.08)); border: 1px solid rgba(255,189,20,.45); }
+
+      @media (max-width: 430px) {
+        .score { font-size: 53px; }
+        .battle-head strong { font-size: 36px; }
+        .main-btn { width: 236px; height:236px; font-size: 108px; }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="app">
+      <section class="row top">
+        <div class="avatar card">🐹</div>
+        <div class="level-wrap">
+          <div class="level-title">Легенда</div>
+          <div class="level-meta"><span>7 / 10</span><span></span></div>
+          <div class="progress"><div></div></div>
+        </div>
+        <div class="hour card">
+          <div class="coin">$</div>
+          <div>
+            <div class="text">Прибыль в час</div>
+            <div class="value">+2,35M</div>
+          </div>
+        </div>
+        <div class="gear card">⚙️</div>
+      </section>
+
+      <section class="row missions">
+        <div class="mission card"><div class="i">🥊</div><div class="t">Ежедневная<br/>атака</div><div class="s">12:30</div></div>
+        <div class="mission card"><div class="i">🛒</div><div class="t">Ценовой<br/>удар</div><div class="s">08:30</div></div>
+        <div class="mission card"><div class="i">📢</div><div class="t">Реклама и<br/>хаос</div><div class="s">20:30</div></div>
+        <div class="mission card"><div class="i">🧰</div><div class="t">Босс дня</div><div class="s">Не начато</div></div>
+      </section>
+
+      <section class="score"><div class="coin">$</div><span id="money">56 782 305</span></section>
+
+      <section class="battle card">
+        <div class="battle-head"><div>ТЫ БЬЁШЬ:<strong>МАГНИТ</strong></div><div>ДО КОНЦА ВОЙНЫ:<br/>🕒 1д 12:45:30</div></div>
+        <div class="arena">
+          <div class="damage" id="damage">-125.6K</div>
+          <div class="combo" id="combo">X17</div>
+          <div class="store"></div>
+        </div>
+        <div class="hp"><div id="hp"></div></div>
+      </section>
+
+      <section class="hit-row">
+        <button class="side-btn card">⚡<br/><small>Бусты</small></button>
+        <button class="main-btn" id="hitBtn">👊</button>
+        <button class="side-btn card">🚀<br/><small>Ракеты</small></button>
+      </section>
+
+      <section class="energy">
+        <div class="line"><span>⚡ <span id="energyText">5000 / 5000</span></span><span>🚀 x2 УРОН 00:00:30</span></div>
+        <div class="bar"><div id="energy"></div></div>
+      </section>
+
+      <nav class="card nav">
+        <div class="tab active">🎯<br/>Битва</div>
+        <div class="tab">🛒<br/>Магазин</div>
+        <div class="tab">🛡️<br/>Клан</div>
+        <div class="tab">🏆<br/>Рейтинг</div>
+        <div class="tab">🐹<br/>Профиль</div>
+      </nav>
+    </main>
+
+    <script>
+      const state = {
+        money: 56782305,
+        hp: 12450000,
+        hpMax: 25000000,
+        energy: 5000,
+        energyMax: 5000,
+        combo: 17,
+      };
+
+      const fmt = (n) => n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+      const moneyEl = document.getElementById('money');
+      const hpEl = document.getElementById('hp');
+      const damageEl = document.getElementById('damage');
+      const comboEl = document.getElementById('combo');
+      const energyEl = document.getElementById('energy');
+      const energyTextEl = document.getElementById('energyText');
+      const hitBtn = document.getElementById('hitBtn');
+
+      function render() {
+        moneyEl.textContent = fmt(state.money);
+        hpEl.style.width = `${Math.max(0, state.hp / state.hpMax * 100)}%`;
+        energyEl.style.width = `${state.energy / state.energyMax * 100}%`;
+        comboEl.textContent = `X${state.combo}`;
+        energyTextEl.textContent = `${state.energy} / ${state.energyMax}`;
+      }
+
+      function hit() {
+        if (state.energy < 25) return;
+        const base = 6400 + Math.floor(Math.random() * 8200);
+        const dmg = base * 2;
+        state.hp = Math.max(0, state.hp - dmg);
+        state.money += Math.floor(dmg * 2.6);
+        state.energy = Math.max(0, state.energy - 25);
+        state.combo = Math.min(99, state.combo + 1);
+        damageEl.textContent = `-${(dmg / 1000).toFixed(1)}K`;
+        render();
+      }
+
+      hitBtn.addEventListener('click', hit);
+      setInterval(() => {
+        state.energy = Math.min(state.energyMax, state.energy + 20);
+        if (state.combo > 1) state.combo -= 1;
+        render();
+      }, 1000);
+
+      render();
+    </script>
+  </body>
+</html>
